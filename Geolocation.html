@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geolocation</title>
+  <style>
+    #mapContainer {
+      position: relative;
+      padding: 100px;
+      height: 60%;
+    }
+
+    #mapCanvas {
+      border: 2px solid #000;
+      border-radius: 10px;
+    }
+
+  body{
+    height: 100vh;
+  }
+  </style>
+</head>
+
+<body>
+  <header>
+    <center>
+      <h1 style="font-family: 'Klee One'; font-weight: bold;">City Exploration Web App</h1>
+    </center>
+  </header>
+
+  <button onclick="getLocation()"
+    style="font-family: 'Klee One'; font-weight: bold; border: 2px double black; width: 150px;">Get My Location</button>
+  <br><br><br>
+  <div id="locationDisplay" style="font-family: 'Klee One'; font-weight: bold; margin-top: 10px;">
+    Latitude: <span id="latitude"></span>, Longitude: <span id="longitude"></span>
+  </div>
+  <div id="mapContainer" style="display: flex; justify-content: center;">
+    <div id="bingMap" style="width: 100%; height: 100%;"></div>
+  
+  </div>
+  
+  <script>
+    var canvas = document.getElementById("mapCanvas");
+    var ctx = canvas.getContext("2d");
+    var map = null;
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(locateSuccess, locateFail);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function loadMap() {
+      map = new Microsoft.Maps.Map(document.getElementById("bingMap"), {
+        credentials: "AuaUTURQ4FP8bvhsXAB33863ETnQ9PhlikdC0PIOaQteTsKZ6rvbqe5pd7B9crq8"
+      });
+    }
+
+     function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(locateSuccess, locateFail);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function locateSuccess(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+
+      if (!map) {
+        loadMap();
+      }
+
+      var center = new Microsoft.Maps.Location(latitude, longitude);
+      map.setView({ center: center, zoom: 15 });
+
+      // Update location display
+      var latitudeDisplay = document.getElementById("latitude");
+      var longitudeDisplay = document.getElementById("longitude");
+      latitudeDisplay.textContent = latitude.toFixed(6);
+      longitudeDisplay.textContent = longitude.toFixed(6);
+
+      // Add a pushpin and label to Bing map
+      var userLocation = new Microsoft.Maps.Pushpin(center, { color: 'blue' });
+      map.entities.push(userLocation);
+
+      var label = new Microsoft.Maps.Infobox(center, { title: 'You are here!', visible: true });
+      map.entities.push(label);
+    }
+
+    function locateFail() {
+      alert("Geolocation failed. Please check your browser settings.");
+    }
+
+    window.onload = function () {
+      loadMap();
+    };
+  </script>
+  <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?callback=loadMap" async defer></script>
+</body>
+</html>
